@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form method="post" action="get_scrip_details">
+    <input id="scrip_name" name="scrip_name" type="text" placeholder="Scrip Name"/>
+    <button type="submit">Search</button>
+</form>
+<p>{{ text }}</p>
+<br />
+<table>
+    <tr>
+        <th>Scrip Code</th>
+        <th>Scrip Name</th>
+        <th>Open</th>
+        <th>High</th>
+        <th>Low</th>
+        <th>Close</th>
+    </tr>
+    {% for item in top_entries %}
+    <tr>
+        {% for _, value in item.items() %}
+        <td>{{ value }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>
