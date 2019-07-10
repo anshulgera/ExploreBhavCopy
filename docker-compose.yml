@@ -7,3 +7,10 @@ services:
       - ./web-service:/app
     ports:
       - 5001:5000
+    depends_on:
+      - redis
+
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
