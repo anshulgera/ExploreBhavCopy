@@ -1,0 +1,6 @@
+cherrypy
+redis
+beautifulsoup4
+requests
+jinja2
+urllib3

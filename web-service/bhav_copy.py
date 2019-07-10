@@ -14,7 +14,7 @@ env = Environment(loader=FileSystemLoader('templates'))
 
 class BhavCopy:
     def __init__(self):
-        self.hostname = '127.0.0.1'
+        self.hostname = 'redis'
         self.port = '6379'
         self.r = redis.Redis(host=self.hostname, port=self.port)
 
@@ -107,5 +107,7 @@ class BhavCopy:
 
 
 if __name__ == "__main__":
-    cherrypy.config.update({'server.socket_port': 8082})
+    cherrypy.config.update({'server.socket_host': '0.0.0.0',
+                        'server.socket_port': 5000,
+                       })
     cherrypy.quickstart(BhavCopy())
