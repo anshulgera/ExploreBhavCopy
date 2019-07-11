@@ -61,7 +61,7 @@ class BhavCopy:
             count += 1
             data = (self.r.hgetall(i))
             data = {key.decode('utf-8'): value.decode('utf-8') for key, value in data.items()}
-            print(data)
+            # print(data)
             result.append(data)
         return result
 
