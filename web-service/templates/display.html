@@ -1,32 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" 
+        href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-<form method="post" action="get_scrip_details">
-    <input id="scrip_name" name="scrip_name" type="text" placeholder="Scrip Name"/>
-    <button type="submit">Search</button>
-</form>
-<p>{{ text }}</p>
-<br />
-<table>
-    <tr>
-        <th>Scrip Code</th>
-        <th>Scrip Name</th>
-        <th>Open</th>
-        <th>High</th>
-        <th>Low</th>
-        <th>Close</th>
-    </tr>
-    {% for item in top_entries %}
-    <tr>
-        {% for _, value in item.items() %}
-        <td>{{ value }}</td>
-        {% endfor %}
-    </tr>
-    {% endfor %}
-</table>
+    <nav>
+        <div class="nav-wrapper">
+            <form action="get_scrip_details" method="POST">
+                <div class="input-field">
+                    <input id="scrip_name" name="scrip_name" type="search" placeholder="Scrip Name">
+                    <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                    <i class="material-icons">close</i>
+                </div>
+            </form>
+        </div>
+    </nav>
+    <!-- <div class="nav-wrapper">
+        <form method="post" action="get_scrip_details">
+            <input id="scrip_name" name="scrip_name" type="search" placeholder="Scrip Name"/>
+            <button type="submit">Search</button>
+        </form>
+    </div> -->
+    <p>{{ text }}</p>
+    <br />
+    <div class="container">
+        <table class="centered highlight responsive-table">
+            <thead>
+                <tr>
+                    <!-- <th>S.No</th> -->
+                    <th>Scrip Code</th>
+                    <th>Scrip Name</th>
+                    <th>Open</th>
+                    <th>High</th>
+                    <th>Low</th>
+                    <th>Close</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in top_entries %}
+                <tr>
+                    {% for _, value in item.items() %}
+                    <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
 </body>
 </html>

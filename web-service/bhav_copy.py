@@ -98,6 +98,8 @@ class BhavCopy:
     @cherrypy.expose
     def get_scrip_details(self, scrip_name=None):
         template = env.get_template('result.html')
+        if scrip_name is None:
+            return template.render(result="No Scrip name provided")
         if self.r.hexists(scrip_name, "Scrip Name"):
             data = self.r.hgetall(scrip_name)
             data = {key.decode('utf-8'): value.decode('utf-8') for key, value in data.items()}
