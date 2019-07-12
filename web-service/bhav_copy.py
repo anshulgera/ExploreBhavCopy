@@ -1,7 +1,7 @@
 import cherrypy
 from jinja2 import FileSystemLoader, Environment
 from bs4 import BeautifulSoup as Soup
-from requests import get
+import requests
 import re
 import io
 import zipfile
@@ -67,33 +67,52 @@ class BhavCopy:
 
     @cherrypy.expose
     def get_bhav_copy(self):
-        bhav_copy_url = "https://www.bseindia.com/markets/MarketInfo/BhavCopy.aspx"
-        template = env.get_template('display.html')
+        bhav_copy_url = "https://www.bseindwqwqia.com/markets/MarketInfo/BhavCopy.aspx"
+        
 
-        # get response object from url
-        response = get(bhav_copy_url)
-        soup = Soup(response.content, 'html.parser')
+        try:
+            # get response object from url
+            response = requests.get(bhav_copy_url)
+        except requests.exceptions.Timeout as err_t:
+            template = env.get_template('error.html')
+            return template.render(text="Timeout Error : "+ str(err_t))
+        except requests.exceptions.HTTPError as err_h:
+            template = env.get_template('error.html')
+            return template.render(text="HTTPError Error : "+ str(err_h))
+        except requests.exceptions.ConnectionError as err_c:
+            template = env.get_template('error.html')
+            return template.render(text="Error Connecting : "+ str(err_c))
+        except requests.exceptions.RequestException as err:
+            template = env.get_template('error.html')
+            return template.render(text="Request Error : "+ str(err))
+        else:
+            template = env.get_template('display.html')
+            soup = Soup(response.content, 'html.parser')
 
-        # find all links with text Equity
-        links = soup.findAll('a', text=re.compile('Equity'), href=True)
+            # find all links with text Equity
+            links = soup.findAll('a', text=re.compile('Equity'), href=True)
 
-        # first link belongs to latest Bhav Copy Zip
-        zip_file_url = links[0]['href']
+            # first link belongs to latest Bhav Copy Zip
+            zip_file_url = links[0]['href']
+            
+            # latest bhav_copy available
+            latest_bhavcopy_date = links[0].text
+            print(latest_bhavcopy_date)
 
-        # get zip content
-        zip_file_request = get(zip_file_url)
-        z = zipfile.ZipFile(io.BytesIO(zip_file_request.content))
+            # get zip content
+            zip_file_request = requests.get(zip_file_url)
+            z = zipfile.ZipFile(io.BytesIO(zip_file_request.content))
 
-        # Extract in CWD
-        z.extractall('.')
+            # Extract in CWD
+            z.extractall('.')
 
-        # assuming zip contains only one file
-        file_name = z.namelist()[0]
-        result = self.dump_to_redis(file_name)
-        if result is True:
-            top_entries = self.get_top_entries_redis()
-            return template.render(text="CSV dumped into Redis", top_entries=top_entries)
-        return template.render(text="Error while dumping into redis")
+            # assuming zip contains only one file
+            file_name = z.namelist()[0]
+            result = self.dump_to_redis(file_name)
+            if result is True:
+                top_entries = self.get_top_entries_redis()
+                return template.render(text="CSV dumped into Redis", top_entries=top_entries)
+            return template.render(text="Error while dumping into redis")
 
     @cherrypy.expose
     def get_scrip_details(self, scrip_name=None):
