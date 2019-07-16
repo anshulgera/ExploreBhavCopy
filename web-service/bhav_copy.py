@@ -1,4 +1,5 @@
 import cherrypy
+import os
 from jinja2 import FileSystemLoader, Environment
 from bs4 import BeautifulSoup as Soup
 import requests
@@ -41,6 +42,7 @@ class BhavCopy:
                     scrip_details['High'] = str(row[5]).rstrip()
                     scrip_details['Low'] = str(row[6]).rstrip()
                     scrip_details['Close'] = str(row[7]).rstrip()
+                    # print(scrip_details)
                     line_count += 1
                     pipe.hmset(scrip_details['Scrip Name'], scrip_details)
             redis_query_result = pipe.execute()
@@ -52,8 +54,8 @@ class BhavCopy:
             return False
 
     def get_top_entries_redis(self):
-        result = list()
-        scrip_details = dict()
+        result = []
+        # scrip_details = dict()
         count = 0
         for i in self.r.scan_iter():
             if count >= 10:
@@ -67,7 +69,7 @@ class BhavCopy:
 
     @cherrypy.expose
     def get_bhav_copy(self):
-        bhav_copy_url = "https://www.bseindwqwqia.com/markets/MarketInfo/BhavCopy.aspx"
+        bhav_copy_url = "https://www.bseindia.com/markets/MarketInfo/BhavCopy.aspx"
         
 
         try:
@@ -111,8 +113,10 @@ class BhavCopy:
             result = self.dump_to_redis(file_name)
             if result is True:
                 top_entries = self.get_top_entries_redis()
-                return template.render(text="CSV dumped into Redis", top_entries=top_entries)
-            return template.render(text="Error while dumping into redis")
+                print(len(top_entries))
+                print(top_entries[0])
+                return template.render(flag=0, text="CSV dumped into Redis", top_entries=top_entries)
+            return template.render(flag=1, text="Error while dumping into redis")
 
     @cherrypy.expose
     def get_scrip_details(self, scrip_name=None):
@@ -131,4 +135,14 @@ if __name__ == "__main__":
     cherrypy.config.update({'server.socket_host': '0.0.0.0',
                         'server.socket_port': 5000,
                        })
-    cherrypy.quickstart(BhavCopy())
+    conf = {
+        '/': {
+            'tools.sessions.on': True,
+            'tools.staticdir.root': os.path.abspath(os.getcwd())
+        },
+        '/static': {
+            'tools.staticdir.on': True,
+            'tools.staticdir.dir': './templates'
+        }
+    }
+    cherrypy.quickstart(BhavCopy(),'/', conf)

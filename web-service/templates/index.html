@@ -1,18 +1,65 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+
 <head>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" 
-        href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">    
-    <meta charset="UTF-8">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link type="text/css" rel="stylesheet" href="/static/css/main.css">
     <title>Explore BhavCopy</title>
 </head>
+
 <body>
-     <div class="center-align">
-        <form method="get" action="get_bhav_copy">
-            <button class="btn waves-effect waves-light" type="submit">
-                <i class="material-icons left">file_download</i>Download Latest Bhavcopy</button>
-        </form>
-    </div>
+    <header>
+        <nav class="navbar navbar-expand-lg sticky-top">
+            <div class="container-fluid">
+                <a class="blue-color navbar-brand" href="/">Explore Bhav Copy</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item active px-3">
+                            <a class="blue-color nav-link" href="https://www.bseindia.com/">BSE<span
+                                    class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item active px-3">
+                            <a class="blue-color nav-link" href="https://www.nseindia.com/">NSE</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main class="container h-100">  
+        <div class="row h-100 align-items-center justify-content-center">
+            <form method="get" action="get_bhav_copy">
+                <button class="btn btn-primary" type="submit"><i class="fas fa-cloud-download-alt"></i> Download Bhav
+                    Copy</button>
+            </form>
+        </div>
+    </main>
+    <nav class="navbar-custom-footer navbar fixed-bottom">
+        <div class="container-fluid my-auto text-center">
+            <ul class="list-inline mx-auto my-auto">
+                <li class="list-inline-item"><a target="_blank" href="https://twitter.com/gera_anshul"><i
+                            class="fab fa-twitter fa-lg"></i></a></li>
+                <li class="list-inline-item"><a target="_blank" href="https://github.com/anshulgera"><i
+                            class="fab fa-github fa-lg"></i></a></li>
+                <li class="list-inline-item"><a target="_blank" href="https://www.linkedin.com/in/anshulgera"><i
+                            class="fab fa-linkedin fa-lg"></i></a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <script src="https://kit.fontawesome.com/effc465da7.js"></script>
 </body>
+
 </html>

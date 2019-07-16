@@ -4,7 +4,7 @@ services:
   web-service:
     build: ./web-service
     volumes: 
-      - ./web-service:/app
+      - /web-service:/app_data
     ports:
       - 5001:5000
     depends_on:
