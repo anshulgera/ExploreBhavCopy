@@ -8,7 +8,7 @@ import io
 import zipfile
 import redis
 import csv
-
+import json
 
 env = Environment(loader=FileSystemLoader('templates'))
 
@@ -115,7 +115,11 @@ class BhavCopy:
                 top_entries = self.get_top_entries_redis()
                 print(len(top_entries))
                 print(top_entries[0])
-                return template.render(flag=0, text="CSV dumped into Redis", top_entries=top_entries)
+                # return template.render(flag=0, text="CSV dumped into Redis", top_entries=top_entries)
+                print("--------------------------------------")
+                print(top_entries)
+                print("--------------------------------------")
+                return json.dumps(top_entries)
             return template.render(flag=1, text="Error while dumping into redis")
 
     @cherrypy.expose
