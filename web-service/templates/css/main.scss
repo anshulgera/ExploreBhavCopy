@@ -1,0 +1,47 @@
+* {
+    margin: 0;
+    padding: 0
+}
+html, body{
+    height: 100%;
+    font-family: "open sans", arial;
+    font-size: 16px;
+    font-weight: 400;
+}
+body{
+    display: flex;
+    flex-direction: column;
+}
+header{
+    min-height: 40px;
+}
+main{
+    flex-grow: 1;
+    overflow: auto;
+}
+.table{
+    margin-bottom: 80px;
+}
+.blue-color{
+    color: #387ED1;
+}
+.btn-primary{
+    color: #fff;
+    background-color:#387ED1;
+    border-color:#fff;
+}
+.navbar-custom-footer {
+    height: 60px;
+    background-color: #222;
+    // color: #CCCCCC;
+  }
+.fa-twitter, .fa-github, .fa-linkedin{
+    color: #CCCCCC;
+}
+.vertical-center {
+    min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+    min-height: 100vh; /* These two lines are counted as one :-)       */
+  
+    display: flex;
+    align-items: center;
+  }

@@ -1,13 +1,138 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Explore BhavCopy</title>
-</head>
-<body>
 
-    <form method="get" action="get_bhav_copy">
-        <button type="submit">Download Latest Bhavcopy</button>
-    </form>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link type="text/css" rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet"
+        href="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome-font-awesome.min.css">
+    <title>Explore BhavCopy</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <header>
+        <nav class="navbar navbar-expand-lg sticky-top shadow-lg p-3 mb-5 bg-white rounded">
+            <div class="container-fluid">
+                <a class="blue-color navbar-brand" href="/">Explore Bhav Copy</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item active px-3">
+                            <a class="blue-color nav-link" href="https://www.bseindia.com/">BSE<span
+                                    class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item active px-3">
+                            <a class="blue-color nav-link" href="https://www.nseindia.com/">NSE</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- DownloadButton -->
+    <div id="spinner_1" class="spinner-grow justify-content-center" style="width: 3rem; height: 3rem;" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+
+    <main id="button-main" class="container h-100">
+        <div class="row h-100 align-items-center justify-content-center">
+            <button id="button-1" class="btn btn-primary"><i class="fas fa-cloud-download-alt"></i> Download Bhav
+                Copy</button>
+        </div>
+    </main>
+    <!-- Spinner -->
+    <!-- <div id="spinner_1" class="spinner-grow d-none" style="width: 3rem; height: 3rem;" role="status">
+        <span class="sr-only">Loading...</span>
+    </div> -->
+    <!-- Table -->
+    <div id="table-1" class="container d-none">
+        <!-- {% if flag == 0 %}
+        <div class="alert alert-success mt-5 text-center" role="alert">
+            {{ text }}
+        </div>
+        {% else %}
+        <div class="alert alert-danger mt-5 text-center" role="alert">
+            {{ text }}
+        </div>
+        {% endif %} -->
+        <br />
+        <table id="scrip_table" class="table table-bordered table-hover mt-2 h-100 mb-5 pb-5">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Scrip Code</th>
+                    <th scope="col">Scrip Name</th>
+                    <th scope="col">Open</th>
+                    <th scope="col">High</th>
+                    <th scope="col">Low</th>
+                    <th scope="col">Close</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <!-- Footer -->
+    <nav id="footer" class="navbar-custom-footer navbar fixed-bottom">
+        <div class="container-fluid text-center">
+            <ul class="list-inline mx-auto">
+                <li class="list-inline-item"><a target="_blank" href="https://twitter.com/gera_anshul"><i
+                            class="fab fa-twitter fa-lg"></i></a></li>
+                <li class="list-inline-item"><a target="_blank" href="https://github.com/anshulgera"><i
+                            class="fab fa-github fa-lg"></i></a></li>
+                <li class="list-inline-item"><a target="_blank" href="https://www.linkedin.com/in/anshulgera"><i
+                            class="fab fa-linkedin fa-lg"></i></a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- <script src="https://kit.fontawesome.com/effc465da7.js"></script> -->
+
+    <script>
+        $(document).ready(function () {
+            $('#button-1').click(function () {
+                // $(this).hide();
+                $('#button-main').addClass('d-none');
+                // $('#spinner_1').removeClass('d-none');
+                $.getJSON('/get_bhav_copy',
+                    function (data) {
+                        var scrip_data = '';
+                        var count = 1
+                        $.each(data, function (key, value) {
+                            scrip_data += '<tr>'
+                            scrip_data += '<th scope="row">' + count + '</th>';
+                            scrip_data += '<td>' + value['Scrip Code'] + '</td>';
+                            scrip_data += '<td>' + value['Scrip Name'] + '</td>';
+                            scrip_data += '<td>' + value['Open'] + '</td>';
+                            scrip_data += '<td>' + value['High'] + '</td>';
+                            scrip_data += '<td>' + value['Low'] + '</td>';
+                            scrip_data += '<td>' + value['Close'] + '</td>';
+                            scrip_data += '</tr>';
+                            count += 1;
+                        });
+                        $('#scrip_table').append(scrip_data)
+                        console.log(data)
+                    }
+                )
+                // $('#spinner_1').addClass('d-none');
+                $('#table-1').removeClass('d-none');
+            });
+        });
+    </script>
 </body>
+
 </html>
