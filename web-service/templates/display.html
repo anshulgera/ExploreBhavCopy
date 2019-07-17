@@ -15,7 +15,7 @@
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg sticky-top h-25 align-items-center">
+        <nav class="navbar navbar-expand-lg sticky-top align-items-center mt-2">
             <div class="container-fluid">
                 <a class="blue-color navbar-brand" href="/">Explore Bhav Copy</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -36,25 +36,27 @@
                     </ul>
                 </div>
                 <form class="form-inline my-2 my-lg-0" method="POST" action="get_scrip_details">
-                    <input id="scrip_name" name="scrip_name" class="form-control mr-sm-2" type="search" placeholder="Scrip Name" aria-label="Scrip Name">
+                    <input id="scrip_name" name="scrip_name" class="form-control mr-sm-2" type="search"
+                        placeholder="Scrip Name" aria-label="Scrip Name">
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                 </form>
             </div>
         </nav>
     </header>
-    {% if flag == 0 %}
-        <div class="alert alert-success mt-3" role="alert">
-            {{ text }}
-        </div>
-    {% else %}
-        <div class="alert alert-danger mt-3" role="alert">
-            {{ text }}
-        </div>
-    {% endif %}
-        <br />
-    
+
+
     <div class="container">
-        <table class="table table-striped">
+        {% if flag == 0 %}
+        <div class="alert alert-success mt-3 text-center" role="alert">
+            {{ text }}
+        </div>
+        {% else %}
+        <div class="alert alert-danger mt-3 text-center" role="alert">
+            {{ text }}
+        </div>
+        {% endif %}
+        <br />
+        <table class="table table-bordered table-hover">
             <thead class="thead-dark">
                 <tr>
                     <th scope="col">#</th>
