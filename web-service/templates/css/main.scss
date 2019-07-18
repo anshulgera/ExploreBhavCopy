@@ -13,14 +13,21 @@ body{
     flex-direction: column;
 }
 header{
-    min-height: 40px;
+    max-height: 60px;
 }
 main{
     flex-grow: 1;
     overflow: auto;
 }
-.table{
-    margin-bottom: 80px;
+// .container{
+//     height:calc(100% - 138px)
+// }
+// #table-1{
+//     overflow-y: scroll;
+// }
+#scrip-table{
+    // overflow: auto;
+    margin-bottom: 100px;;
 }
 .blue-color{
     color: #387ED1;
