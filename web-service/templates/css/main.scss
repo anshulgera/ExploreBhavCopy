@@ -15,7 +15,11 @@ body{
 header{
     max-height: 60px;
 }
-main{
+// main{
+//     flex-grow: 1;
+//     overflow: auto;
+// }
+div#button-main{
     flex-grow: 1;
     overflow: auto;
 }
@@ -25,9 +29,9 @@ main{
 // #table-1{
 //     overflow-y: scroll;
 // }
-#scrip-table{
-    // overflow: auto;
-    margin-bottom: 100px;;
+table#scrip-table{
+    overflow: auto;
+    margin-bottom: 80px;
 }
 .blue-color{
     color: #387ED1;

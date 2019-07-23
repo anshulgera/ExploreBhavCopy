@@ -141,6 +141,8 @@ class BhavCopy:
             print(data)
             result.append(data)
             return json.dumps(result)
+        else:
+            return json.dumps([])
         # else:
             # return template.render(result="Not avaliable")
 

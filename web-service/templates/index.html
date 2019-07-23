@@ -7,58 +7,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link type="text/css" rel="stylesheet" href="/static/css/main.css">
     <link rel="stylesheet"
         href="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome-font-awesome.min.css">
     <title>Explore BhavCopy</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.4.1.js"
         integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
 </head>
 
 <body>
     <!-- Navbar -->
-    <header>
-        <nav class="navbar navbar-expand-lg sticky-top shadow-lg p-3 bg-white rounded">
-            <div class="container-fluid">
-                <a class="blue-color navbar-brand" href="/">Explore Bhav Copy</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse"
-                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+    <nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light rounded">
+        <div class="container-fluid">
+            <a class="blue-color navbar-brand" href="/">Explore Bhav Copy</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item active px-3">
-                            <a class="blue-color nav-link" href="https://www.bseindia.com/">BSE<span
-                                    class="sr-only">(current)</span></a>
-                        </li>
-                        <li class="nav-item active px-3">
-                            <a class="blue-color nav-link" href="https://www.nseindia.com/">NSE</a>
-                        </li>
-                    </ul>
-                </div>
-                <form id="search_box" class="form-inline my-2 my-lg-0 d-none">
-                    <input id="scrip_name" class="form-control mr-sm-2" type="search" placeholder="Scrip Name"
-                        aria-label="Scrip Name">
-                    <button id="search_button" class="btn btn-outline-success my-2 my-sm-0"
-                        type="submit">Search</button>
-                </form>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active px-3">
+                        <a class="blue-color nav-link" href="https://www.bseindia.com/">BSE</a>
+                    </li>
+                    <li class="nav-item active px-3">
+                        <a class="blue-color nav-link" href="https://www.nseindia.com/">NSE</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
-    </header>
+            <form id="search_box" class="form-inline my-2 my-lg-0 d-none">
+                <input id="scrip_name" class="form-control mr-sm-2" type="search" placeholder="Scrip Name"
+                    aria-label="Scrip Name" required>
+                <button id="search_button" class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
     <!-- Download button -->
-    <main id="button-main" class="container">
+    <div id="button-main" class="container h-100">
         <div class="row h-100 align-items-center justify-content-center">
             <button id="button-bhavcopy" class="btn btn-primary"><i class="fas fa-cloud-download-alt"></i> Download Bhav
                 Copy</button>
         </div>
-    </main>
+    </div>
     <!-- Table 10 results from redis -->
-    <div id="table-content" class="container d-none">
-        <table id="scrip_table" class="table table-bordered table-hover mt-2">
+    <div id="table-content" class="container d-none table-responsive">
+        <table id="scrip_table" class="table table-bordered table-hover mt-2 mb-5 h-100 overflow-auto">
             <thead class="thead-dark">
                 <tr>
                     <th scope="col">#</th>
@@ -75,7 +69,7 @@
         </table>
     </div>
     <!-- Search Query Table -->
-    <div id="table-search" class="container d-none">
+    <div id="table-search" class="container d-none table-responsive">
         <table id="result-table" class="table table-bordered table-hover mt-2">
             <thead class="thead-dark">
                 <tr>
@@ -107,7 +101,12 @@
     </nav>
 
     <script src="https://kit.fontawesome.com/effc465da7.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
     <script>
         $(document).ready(function () {
             // Handle download bhavcopy
@@ -140,27 +139,42 @@
             });
             $(function () {
                 $('#search_button').bind('click', function () {
-                    $('#table-content').addClass('d-none');
-                    $('#table-search').removeClass('d-none');
-                    $('#scrip-search-result').remove();
-                    $.getJSON('/get_scrip_details', {
-                        scrip_name: $('#scrip_name').val(),
-                    }, function (data) {
-                        var scrip_details = '';
-                        $.each(data, function (key, value) {
-                            scrip_details += '<tr id="scrip-search-result">';
-                            scrip_details += '<td>' + value['Scrip Code'] + '</td>';
-                            scrip_details += '<td>' + value['Scrip Name'] + '</td>';
-                            scrip_details += '<td>' + value['Open'] + '</td>';
-                            scrip_details += '<td>' + value['High'] + '</td>';
-                            scrip_details += '<td>' + value['Low'] + '</td>';
-                            scrip_details += '<td>' + value['Close'] + '</td>';
-                            scrip_details += '</tr>';
+                    if ($('#scrip_name').val() == '') {
+
+                    }
+                    else {
+                        $('#table-content').addClass('d-none');
+                        $('#table-search').removeClass('d-none');
+                        $('#scrip-search-result').remove();
+                        $.getJSON('/get_scrip_details', {
+                            scrip_name: $('#scrip_name').val(),
+                        }, function (data) {
+                            if (data.length == 1) {
+                                var scrip_details = '';
+                                console.log(data);
+                                $.each(data, function (key, value) {
+                                    scrip_details += '<tr id="scrip-search-result">';
+                                    scrip_details += '<td>' + value['Scrip Code'] + '</td>';
+                                    scrip_details += '<td>' + value['Scrip Name'] + '</td>';
+                                    scrip_details += '<td>' + value['Open'] + '</td>';
+                                    scrip_details += '<td>' + value['High'] + '</td>';
+                                    scrip_details += '<td>' + value['Low'] + '</td>';
+                                    scrip_details += '<td>' + value['Close'] + '</td>';
+                                    scrip_details += '</tr>';
+                                });
+                                $('#result-table').append(scrip_details);
+                            }
+                            else {
+                                alert("No such Scrip Name!");
+                                window.location.href = '/';
+                            }
+
+                            // alert(data);
                         });
-                        $('#result-table').append(scrip_details);
-                        // alert(data);
-                    });
-                    return false;
+                        return false;
+
+                    }
+
                 });
             });
         });
