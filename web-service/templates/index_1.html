@@ -18,10 +18,6 @@
 </head>
 
 <body>
-    <!-- Loader -->
-    <div id="loader">
-        <img id="loading" src="./css/Loader.gif" />
-    </div>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light rounded">
         <div class="container-fluid">
@@ -47,15 +43,13 @@
             </form>
         </div>
     </nav>
-
-    <!-- Download Bhavcopy button -->
+    <!-- Download button -->
     <div id="button-main" class="container h-100">
         <div class="row h-100 align-items-center justify-content-center">
             <button id="button-bhavcopy" class="btn btn-primary"><i class="fas fa-cloud-download-alt"></i> Download Bhav
                 Copy</button>
         </div>
     </div>
-
     <!-- Table 10 results from redis -->
     <div id="table-content" class="container d-none table-responsive">
         <table id="scrip_table" class="table table-bordered table-hover mt-2 mb-5 h-100 overflow-auto">
@@ -74,7 +68,6 @@
             </tbody>
         </table>
     </div>
-
     <!-- Search Query Table -->
     <div id="table-search" class="container d-none table-responsive">
         <table id="result-table" class="table table-bordered table-hover mt-2">
@@ -93,7 +86,6 @@
             </tbody>
         </table>
     </div>
-
     <!-- Footer -->
     <nav id="footer" class="navbar-custom-footer navbar fixed-bottom">
         <div class="container-fluid text-center mt-3">
@@ -108,7 +100,6 @@
         </div>
     </nav>
 
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.js"></script>
     <script src="https://kit.fontawesome.com/effc465da7.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
@@ -117,15 +108,9 @@
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
     <script>
-
-        $(window).on('load', function () {
-            $('#loader').delay(1000).fadeOut();
-        });
-
-        // download bhavcopy button script
-        // call function get_bhav_copy and get 10 entries from redis
-        $(function () {
-            $('#button-bhavcopy').bind('click', function () {
+        $(document).ready(function () {
+            // Handle download bhavcopy
+            $('#button-bhavcopy').click(function () {
                 $('#button-main').addClass('d-none');
                 $.getJSON('/get_bhav_copy',
                     function (data) {
@@ -147,91 +132,52 @@
                         console.log(data);
                     }
                 );
-                $()
                 // Show table content
                 $('#table-content').removeClass('d-none');
                 // Show search box
                 $('#search_box').removeClass('d-none');
-
             });
+            $(function () {
+                $('#search_button').bind('click', function () {
+                    if ($('#scrip_name').val() == '') {
 
-        });
+                    }
+                    else {
+                        $('#table-content').addClass('d-none');
+                        $('#table-search').removeClass('d-none');
+                        $('#scrip-search-result').remove();
+                        $.getJSON('/get_scrip_details', {
+                            scrip_name: $('#scrip_name').val(),
+                        }, function (data) {
+                            if (data.length == 1) {
+                                var scrip_details = '';
+                                console.log(data);
+                                $.each(data, function (key, value) {
+                                    scrip_details += '<tr id="scrip-search-result">';
+                                    scrip_details += '<td>' + value['Scrip Code'] + '</td>';
+                                    scrip_details += '<td>' + value['Scrip Name'] + '</td>';
+                                    scrip_details += '<td>' + value['Open'] + '</td>';
+                                    scrip_details += '<td>' + value['High'] + '</td>';
+                                    scrip_details += '<td>' + value['Low'] + '</td>';
+                                    scrip_details += '<td>' + value['Close'] + '</td>';
+                                    scrip_details += '</tr>';
+                                });
+                                $('#result-table').append(scrip_details);
+                            }
+                            else {
+                                alert("No such Scrip Name!");
+                                window.location.href = '/';
+                            }
 
-        // $('#button-bhavcopy').click(function () {
-        //     $('#button-main').addClass('d-none');
-        //     $.getJSON('/get_bhav_copy',
-        //         function (data) {
-        //             var scrip_data = '';
-        //             var count = 1
-        //             $.each(data, function (key, value) {
-        //                 scrip_data += '<tr>';
-        //                 scrip_data += '<th scope="row">' + count + '</th>';
-        //                 scrip_data += '<td>' + value['Scrip Code'] + '</td>';
-        //                 scrip_data += '<td>' + value['Scrip Name'] + '</td>';
-        //                 scrip_data += '<td>' + value['Open'] + '</td>';
-        //                 scrip_data += '<td>' + value['High'] + '</td>';
-        //                 scrip_data += '<td>' + value['Low'] + '</td>';
-        //                 scrip_data += '<td>' + value['Close'] + '</td>';
-        //                 scrip_data += '</tr>';
-        //                 count += 1;
-        //             });
-        //             $('#scrip_table').append(scrip_data);
-        //             console.log(data);
-        //         }
-        //     );
-        //     // Show table content
-        //     $('#table-content').removeClass('d-none');
-        //     // Show search box
-        //     $('#search_box').removeClass('d-none');
-        // });
+                            // alert(data);
+                        });
+                        return false;
 
+                    }
 
-        // search button script
-        $(function () {
-            $('#search_button').bind('click', function () {
-                // if search scrip name is not empty
-                if ($('#scrip_name').val() != '') {
-                    // hide table with 10 entires and show search query table
-                    $('#table-content').addClass('d-none');
-                    $('#table-search').removeClass('d-none');
-
-                    // to remove previous search result entry from the table for contiguous search queries
-                    $('#scrip-search-result').remove();
-                    $.getJSON('/get_scrip_details', {
-                        scrip_name: $('#scrip_name').val(),
-                    }, function (data) {
-                        if (data.length == 1) {
-                            var scrip_details = '';
-                            console.log(data);
-                            $.each(data, function (key, value) {
-                                scrip_details += '<tr id="scrip-search-result">';
-                                scrip_details += '<td>' + value['Scrip Code'] + '</td>';
-                                scrip_details += '<td>' + value['Scrip Name'] + '</td>';
-                                scrip_details += '<td>' + value['Open'] + '</td>';
-                                scrip_details += '<td>' + value['High'] + '</td>';
-                                scrip_details += '<td>' + value['Low'] + '</td>';
-                                scrip_details += '<td>' + value['Close'] + '</td>';
-                                scrip_details += '</tr>';
-                            });
-                            $('#result-table').append(scrip_details);
-                        }
-                        else {
-                            alert("No such Scrip Name!");
-                            window.location.href = '/';
-                        }
-
-                        // alert(data);
-                    });
-                    return false;
-
-                }
-
-
-
+                });
             });
         });
-
-
     </script>
 </body>
 

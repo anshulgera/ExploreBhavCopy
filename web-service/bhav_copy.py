@@ -15,6 +15,9 @@ env = Environment(loader=FileSystemLoader('templates'))
 
 class BhavCopy:
     def __init__(self):
+        # hostname for deployment in a single task
+        # self.hostname = 'localhost'
+        # hostname for docker compose up
         self.hostname = 'redis'
         self.port = '6379'
         self.r = redis.Redis(host=self.hostname, port=self.port)
@@ -43,7 +46,6 @@ class BhavCopy:
                     scrip_details['Low'] = str(row[6]).rstrip()
                     scrip_details['Close'] = str(row[7]).rstrip()
                     # print(scrip_details)
-                    line_count += 1
                     pipe.hmset(scrip_details['Scrip Name'], scrip_details)
             redis_query_result = pipe.execute()
 
@@ -76,19 +78,14 @@ class BhavCopy:
             # get response object from url
             response = requests.get(bhav_copy_url)
         except requests.exceptions.Timeout as err_t:
-            template = env.get_template('error.html')
-            return template.render(text="Timeout Error : "+ str(err_t))
+            return 
         except requests.exceptions.HTTPError as err_h:
-            template = env.get_template('error.html')
-            return template.render(text="HTTPError Error : "+ str(err_h))
+            return
         except requests.exceptions.ConnectionError as err_c:
-            template = env.get_template('error.html')
-            return template.render(text="Error Connecting : "+ str(err_c))
+            return 
         except requests.exceptions.RequestException as err:
-            template = env.get_template('error.html')
-            return template.render(text="Request Error : "+ str(err))
+            return
         else:
-            template = env.get_template('display.html')
             soup = Soup(response.content, 'html.parser')
 
             # find all links with text Equity
@@ -120,19 +117,10 @@ class BhavCopy:
                 print(top_entries)
                 print("--------------------------------------")
                 return json.dumps(top_entries)
-            return template.render(flag=1, text="Error while dumping into redis")
+            return 
 
     @cherrypy.expose
-    # @cherrypy.tools.json_in()
-    # @cherrypy.tools.json_out()
     def get_scrip_details(self, scrip_name):
-        # json_obj = cherrypy.request.json
-        # scrip_name = json_obj['scrip_name']
-        # template = env.get_template('result.html')
-        # if scrip_name is None:
-        #     return template.render(result="No Scrip name provided")
-        # a = cherrypy.requests.json
-        # scrip_name = a['scrip_name']
         scrip_name = str(scrip_name)
         if self.r.hexists(scrip_name, "Scrip Name"):
             data = self.r.hgetall(scrip_name)
@@ -143,13 +131,11 @@ class BhavCopy:
             return json.dumps(result)
         else:
             return json.dumps([])
-        # else:
-            # return template.render(result="Not avaliable")
 
 
 if __name__ == "__main__":
     cherrypy.config.update({'server.socket_host': '0.0.0.0',
-                        'server.socket_port': 5000,
+                        'server.socket_port': 80,
                        })
     conf = {
         '/': {

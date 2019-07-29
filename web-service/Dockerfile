@@ -9,6 +9,8 @@ WORKDIR /app_data
 
 RUN pip3 install -r requirements.txt
 
+EXPOSE 80
+
 ENTRYPOINT [ "python3" ]
 
 CMD [ "bhav_copy.py" ]
