@@ -19,9 +19,10 @@
 
 <body>
     <!-- Loader -->
-    <div id="loader">
-        <img id="loading" src="./css/Loader.gif" />
+    <div class="se-pre-con">
+
     </div>
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light rounded">
         <div class="container-fluid">
@@ -47,6 +48,10 @@
             </form>
         </div>
     </nav>
+    <!-- Error alert -->
+    <div class="alert alert-warning d-none" role="alert" id="error_box">
+
+    </div>
 
     <!-- Download Bhavcopy button -->
     <div id="button-main" class="container h-100">
@@ -58,6 +63,9 @@
 
     <!-- Table 10 results from redis -->
     <div id="table-content" class="container d-none table-responsive">
+        <div id="table-loading">
+
+        </div>
         <table id="scrip_table" class="table table-bordered table-hover mt-2 mb-5 h-100 overflow-auto">
             <thead class="thead-dark">
                 <tr>
@@ -118,89 +126,77 @@
         crossorigin="anonymous"></script>
     <script>
 
-        $(window).on('load', function () {
-            $('#loader').delay(1000).fadeOut();
+        $(window).on("load", function () {
+            // Animate loader off screen
+            $(".se-pre-con").delay(500).fadeOut("slow");
+            console.log("windows loaded");
         });
 
         // download bhavcopy button script
         // call function get_bhav_copy and get 10 entries from redis
         $(function () {
             $('#button-bhavcopy').bind('click', function () {
+                $("#table-loading").fadeIn("slow");
                 $('#button-main').addClass('d-none');
                 $.getJSON('/get_bhav_copy',
                     function (data) {
-                        var scrip_data = '';
-                        var count = 1
-                        $.each(data, function (key, value) {
-                            scrip_data += '<tr>';
-                            scrip_data += '<th scope="row">' + count + '</th>';
-                            scrip_data += '<td>' + value['Scrip Code'] + '</td>';
-                            scrip_data += '<td>' + value['Scrip Name'] + '</td>';
-                            scrip_data += '<td>' + value['Open'] + '</td>';
-                            scrip_data += '<td>' + value['High'] + '</td>';
-                            scrip_data += '<td>' + value['Low'] + '</td>';
-                            scrip_data += '<td>' + value['Close'] + '</td>';
-                            scrip_data += '</tr>';
-                            count += 1;
-                        });
-                        $('#scrip_table').append(scrip_data);
-                        console.log(data);
+                        if (data.length == 10) {
+                            var scrip_data = '';
+                            var count = 1
+                            $.each(data, function (key, value) {
+                                scrip_data += '<tr>';
+                                scrip_data += '<th scope="row">' + count + '</th>';
+                                scrip_data += '<td>' + value['Scrip Code'] + '</td>';
+                                scrip_data += '<td>' + value['Scrip Name'] + '</td>';
+                                scrip_data += '<td>' + value['Open'] + '</td>';
+                                scrip_data += '<td>' + value['High'] + '</td>';
+                                scrip_data += '<td>' + value['Low'] + '</td>';
+                                scrip_data += '<td>' + value['Close'] + '</td>';
+                                scrip_data += '</tr>';
+                                count += 1;
+                            });
+                            $('#scrip_table').append(scrip_data);
+                            console.log(data);
+                            // Show table content
+                            $("#table-loading").fadeOut("slow");
+                            $('#table-content').removeClass('d-none');
+                            // Show search box
+                            $('#search_box').removeClass('d-none');
+                        }
+                        else {
+                            $('#error_box').removeClass('d-none');
+                            $.each(data, function (key, value) {
+                                $('#error_box').append(value);
+                                console.log(value);
+                            });
+                        }
+
                     }
                 );
-                $()
-                // Show table content
-                $('#table-content').removeClass('d-none');
-                // Show search box
-                $('#search_box').removeClass('d-none');
+
 
             });
 
         });
-
-        // $('#button-bhavcopy').click(function () {
-        //     $('#button-main').addClass('d-none');
-        //     $.getJSON('/get_bhav_copy',
-        //         function (data) {
-        //             var scrip_data = '';
-        //             var count = 1
-        //             $.each(data, function (key, value) {
-        //                 scrip_data += '<tr>';
-        //                 scrip_data += '<th scope="row">' + count + '</th>';
-        //                 scrip_data += '<td>' + value['Scrip Code'] + '</td>';
-        //                 scrip_data += '<td>' + value['Scrip Name'] + '</td>';
-        //                 scrip_data += '<td>' + value['Open'] + '</td>';
-        //                 scrip_data += '<td>' + value['High'] + '</td>';
-        //                 scrip_data += '<td>' + value['Low'] + '</td>';
-        //                 scrip_data += '<td>' + value['Close'] + '</td>';
-        //                 scrip_data += '</tr>';
-        //                 count += 1;
-        //             });
-        //             $('#scrip_table').append(scrip_data);
-        //             console.log(data);
-        //         }
-        //     );
-        //     // Show table content
-        //     $('#table-content').removeClass('d-none');
-        //     // Show search box
-        //     $('#search_box').removeClass('d-none');
-        // });
-
 
         // search button script
         $(function () {
             $('#search_button').bind('click', function () {
                 // if search scrip name is not empty
                 if ($('#scrip_name').val() != '') {
-                    // hide table with 10 entires and show search query table
-                    $('#table-content').addClass('d-none');
-                    $('#table-search').removeClass('d-none');
 
-                    // to remove previous search result entry from the table for contiguous search queries
-                    $('#scrip-search-result').remove();
                     $.getJSON('/get_scrip_details', {
                         scrip_name: $('#scrip_name').val(),
                     }, function (data) {
                         if (data.length == 1) {
+
+                            // to remove previous search result entry from the table for contiguous search queries
+                            $('#scrip-search-result').remove();
+                            // hide table with 10 entires and show search query table
+                            $('#table-content').addClass('d-none');
+                            $('#table-search').removeClass('d-none');
+
+
                             var scrip_details = '';
                             console.log(data);
                             $.each(data, function (key, value) {
@@ -213,11 +209,17 @@
                                 scrip_details += '<td>' + value['Close'] + '</td>';
                                 scrip_details += '</tr>';
                             });
+                            $('#error_box').addClass('d-none');
                             $('#result-table').append(scrip_details);
                         }
                         else {
-                            alert("No such Scrip Name!");
-                            window.location.href = '/';
+                            // to remove previous search result entry from the table for contiguous search queries
+                            $('#table-search').remove();
+                            $('#error_box').empty();
+                            $('#error_box').append("No such scrip name. Redirecting to Home Page . . .");
+                            $('#error_box').removeClass('d-none');
+                            window.setTimeout(function () { location.reload() }, 3000);
+                            // window.location.href = '/';
                         }
 
                         // alert(data);

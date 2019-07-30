@@ -9,18 +9,22 @@ import zipfile
 import redis
 import csv
 import json
+import logging
 
 env = Environment(loader=FileSystemLoader('templates'))
-
+logging.basicConfig(filename='bhav_copy.log', level=logging.DEBUG, 
+                    format='%(asctime)s:%(levelname)s:%(message)s')
 
 class BhavCopy:
     def __init__(self):
         # hostname for deployment in a single task
-        # self.hostname = 'localhost'
+        self.hostname = 'localhost'
         # hostname for docker compose up
-        self.hostname = 'redis'
+        # self.hostname = 'redis'
         self.port = '6379'
         self.r = redis.Redis(host=self.hostname, port=self.port)
+        logging.debug("Current redis hostname : {} and port : {}".format(self.hostname, self.port))
+        logging.debug("Redis Hostname for AWS task should be 'localhost' and for local deployment it should be 'redis'")
 
     @cherrypy.expose
     def index(self):
@@ -28,12 +32,15 @@ class BhavCopy:
         return template.render()
 
     def dump_to_redis(self, file_name):
+        logging.debug('Inside dump_to_redis function')
+        logging.debug('Opening downloaded bhavcopy csv ...')
         with open(file_name) as bhav_copy_csv:
             csv_reader = csv.reader(bhav_copy_csv, delimiter=',')
             line_count = 0
             scrip_details = dict()
             pipe = self.r.pipeline()
             for row in csv_reader:
+                logging.debug('Skip row containing columns name')
                 # Skip first row having column names
                 if line_count == 0:
                     line_count += 1
@@ -51,11 +58,14 @@ class BhavCopy:
 
         # return True if all redis operations executed successfully
         if False not in redis_query_result:
+            logging.debug('Entires dumped to redis successfully.')
             return True
         else:
+            logging.debug('Failed to dump entries to redis.')
             return False
 
     def get_top_entries_redis(self):
+        logging.debug('Getting 10 entries from redis.')
         result = []
         # scrip_details = dict()
         count = 0
@@ -71,20 +81,33 @@ class BhavCopy:
 
     @cherrypy.expose
     def get_bhav_copy(self):
+
         bhav_copy_url = "https://www.bseindia.com/markets/MarketInfo/BhavCopy.aspx"
-        
 
         try:
             # get response object from url
             response = requests.get(bhav_copy_url)
+            logging.debug('Url {} reachable and get request is successful'.format(bhav_copy_url))
         except requests.exceptions.Timeout as err_t:
-            return 
+            error = {}
+            error["Error"] = "Error : " + str(err_t)
+            logging.debug(error["Error"])
+            return json.dumps([error])
         except requests.exceptions.HTTPError as err_h:
-            return
+            error = {}
+            error["Error"] = "Error : " + str(err_h)
+            logging.debug(error["Error"])
+            return json.dumps([error])
         except requests.exceptions.ConnectionError as err_c:
-            return 
+            error = {}
+            error["Error"] = "Error : " + str(err_c)
+            logging.debug(error["Error"])
+            return json.dumps([error])
         except requests.exceptions.RequestException as err:
-            return
+            error = {}
+            error["Error"] = "Error : " + str(err)
+            logging.debug(error["Error"])
+            return json.dumps([error])
         else:
             soup = Soup(response.content, 'html.parser')
 
@@ -96,7 +119,7 @@ class BhavCopy:
             
             # latest bhav_copy available
             latest_bhavcopy_date = links[0].text
-            print(latest_bhavcopy_date)
+            logging.debug('Bhav Copy Date : {}'.format(latest_bhavcopy_date))
 
             # get zip content
             zip_file_request = requests.get(zip_file_url)
@@ -110,23 +133,23 @@ class BhavCopy:
             result = self.dump_to_redis(file_name)
             if result is True:
                 top_entries = self.get_top_entries_redis()
-                print(len(top_entries))
-                print(top_entries[0])
-                # return template.render(flag=0, text="CSV dumped into Redis", top_entries=top_entries)
-                print("--------------------------------------")
-                print(top_entries)
-                print("--------------------------------------")
+                logging.debug('First of 10 entries {}'.format(top_entries[0]))
                 return json.dumps(top_entries)
-            return 
+            else:
+                error = {}
+                error["Error"] = "Error dumping entires into redis. " 
+                return json.dumps([error])
 
     @cherrypy.expose
     def get_scrip_details(self, scrip_name):
+        logging.debug('Search request for scrip : {}'.format(scrip_name))
         scrip_name = str(scrip_name)
         if self.r.hexists(scrip_name, "Scrip Name"):
+            logging.debug('Scrip exists.')
             data = self.r.hgetall(scrip_name)
             data = {key.decode('utf-8'): value.decode('utf-8') for key, value in data.items()}
+            logging.debug('Scrip details : {}',format(data))
             result = []
-            print(data)
             result.append(data)
             return json.dumps(result)
         else:
