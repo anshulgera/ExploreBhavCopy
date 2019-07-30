@@ -143,12 +143,12 @@ class BhavCopy:
     @cherrypy.expose
     def get_scrip_details(self, scrip_name):
         logging.debug('Search request for scrip : {}'.format(scrip_name))
-        scrip_name = str(scrip_name)
+        scrip_name = str(scrip_name).upper()
         if self.r.hexists(scrip_name, "Scrip Name"):
             logging.debug('Scrip exists.')
             data = self.r.hgetall(scrip_name)
             data = {key.decode('utf-8'): value.decode('utf-8') for key, value in data.items()}
-            logging.debug('Scrip details : {}',format(data))
+            logging.debug('Scrip details : {}'.format(data))
             result = []
             result.append(data)
             return json.dumps(result)
