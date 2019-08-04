@@ -19,7 +19,7 @@
 
 <body>
     <!-- Loader -->
-    <div class="se-pre-con">
+    <div class="se-pre-con" id="loader">
 
     </div>
 
@@ -54,18 +54,18 @@
     </div>
 
     <!-- Download Bhavcopy button -->
-    <div id="button-main" class="container h-100">
+    <!-- <div id="button-main" class="container h-100">
         <div class="row h-100 align-items-center justify-content-center">
             <button id="button-bhavcopy" class="btn btn-primary"><i class="fas fa-cloud-download-alt"></i> Download Bhav
                 Copy</button>
         </div>
-    </div>
+    </div> -->
 
     <!-- Table 10 results from redis -->
-    <div id="table-content" class="container d-none table-responsive">
-        <div id="table-loading">
+    <div id="table-content" class="container table-responsive">
+        <!-- <div id="table-loading">
 
-        </div>
+        </div> -->
         <table id="scrip_table" class="table table-bordered table-hover mt-2 mb-5 h-100 overflow-auto">
             <thead class="thead-dark">
                 <tr>
@@ -126,18 +126,8 @@
         crossorigin="anonymous"></script>
     <script>
 
-        $(window).on("load", function () {
-            // Animate loader off screen
-            $(".se-pre-con").delay(500).fadeOut("slow");
-            console.log("windows loaded");
-        });
-
-        // download bhavcopy button script
-        // call function get_bhav_copy and get 10 entries from redis
-        $(function () {
-            $('#button-bhavcopy').bind('click', function () {
-                $("#table-loading").fadeIn("slow");
-                $('#button-main').addClass('d-none');
+        $(document).ready(function(){
+            $(function(){
                 $.getJSON('/get_bhav_copy',
                     function (data) {
                         if (data.length == 10) {
@@ -158,7 +148,7 @@
                             $('#scrip_table').append(scrip_data);
                             console.log(data);
                             // Show table content
-                            $("#table-loading").fadeOut("slow");
+                            $('#loader').delay(500).fadeOut('slow');
                             $('#table-content').removeClass('d-none');
                             // Show search box
                             $('#search_box').removeClass('d-none');
@@ -173,22 +163,19 @@
 
                     }
                 );
-
-
             });
-
         });
 
         // search button script
         $(function () {
             $('#search_button').bind('click', function () {
+                $('#result-table').children().not('thead').empty();
                 // if search scrip name is not empty
                 if ($('#scrip_name').val() != '') {
-
                     $.getJSON('/get_scrip_details', {
                         scrip_name: $('#scrip_name').val(),
                     }, function (data) {
-                        if (data.length == 1) {
+                        if (data.length != 0) {
 
                             // to remove previous search result entry from the table for contiguous search queries
                             $('#scrip-search-result').remove();
@@ -214,15 +201,11 @@
                         }
                         else {
                             // to remove previous search result entry from the table for contiguous search queries
-                            $('#table-search').remove();
                             $('#error_box').empty();
-                            $('#error_box').append("No such scrip name. Redirecting to Home Page . . .");
+                            $('#error_box').append("No such scrip name.");
                             $('#error_box').removeClass('d-none');
-                            window.setTimeout(function () { location.reload() }, 3000);
-                            // window.location.href = '/';
                         }
 
-                        // alert(data);
                     });
                     return false;
 

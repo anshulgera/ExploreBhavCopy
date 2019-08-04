@@ -4,8 +4,7 @@ services:
   web-service:
     build: ./web-service
     volumes: 
-      - C:/Users/1022772/Documents/Work/ExploreBhavCopy/web-service:/app_data
-    #   - /web-service:/app_data
+      - ./web-service:/app_data
     ports:
       - 80:80
     depends_on:

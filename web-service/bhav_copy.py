@@ -18,9 +18,9 @@ logging.basicConfig(filename='bhav_copy.log', level=logging.DEBUG,
 class BhavCopy:
     def __init__(self):
         # hostname for deployment in a single task
-        self.hostname = 'localhost'
+        # self.hostname = 'localhost'
         # hostname for docker compose up
-        # self.hostname = 'redis'
+        self.hostname = 'redis'
         self.port = '6379'
         self.r = redis.Redis(host=self.hostname, port=self.port)
         logging.debug("Current redis hostname : {} and port : {}".format(self.hostname, self.port))
@@ -144,17 +144,13 @@ class BhavCopy:
     def get_scrip_details(self, scrip_name):
         logging.debug('Search request for scrip : {}'.format(scrip_name))
         scrip_name = str(scrip_name).upper()
-        if self.r.hexists(scrip_name, "Scrip Name"):
-            logging.debug('Scrip exists.')
-            data = self.r.hgetall(scrip_name)
-            data = {key.decode('utf-8'): value.decode('utf-8') for key, value in data.items()}
-            logging.debug('Scrip details : {}'.format(data))
-            result = []
-            result.append(data)
-            return json.dumps(result)
-        else:
-            return json.dumps([])
-
+        results = []
+        for scrip in self.r.scan_iter(scrip_name+"*"):
+            scrip_details = self.r.hgetall(scrip)
+            scrip_details = { key.decode('utf-8'): value.decode('utf-8') for key, value in scrip_details.items() }
+            logging.debug('{}'.format(scrip.decode()))
+            results.append(scrip_details)
+        return json.dumps(results)
 
 if __name__ == "__main__":
     cherrypy.config.update({'server.socket_host': '0.0.0.0',
