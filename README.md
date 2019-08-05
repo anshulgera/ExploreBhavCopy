@@ -6,4 +6,7 @@ You can run this using docker or by directly running the Cherrypy app and Redis 
 Make sure you have docker installed and its working fine.
 
 1. Clone this repository.
-2. Run docker-compose up from the root directory of this repository. This will pull the required images i.e. [Webapp image](https://hub.docker.com/r/anshulgera/bhav_copy_app) and [Redis image](https://hub.docker.com/_/redis) from [Docker hub](https://hub.docker.com/).
+2. Run docker-compose up from the root directory of this repository. This will pull the required images i.e. [Webapp image](https://hub.docker.com/r/anshulgera/bhav_copy_app) and [Redis image](https://hub.docker.com/_/redis) from [Docker hub](https://hub.docker.com/). This will start the app on your localhost at port 9090.
+You can make your own changes and run 'docker-compose -f docker-compose-dev.yml up'.
+
+![](app.gif)
