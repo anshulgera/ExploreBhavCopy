@@ -2,9 +2,11 @@ version: '3'
 
 services: 
   web-service:
-    image: anshulgera/bhav_copy_app:latest
+    build: ./web-service
+    volumes: 
+      - ./web-service:/app_data
     ports:
-      - 9090:80
+      - 80:80
     depends_on:
       - redis
     networks:
