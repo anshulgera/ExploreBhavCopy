@@ -88,57 +88,44 @@ class BhavCopy:
             # get response object from url
             response = requests.get(bhav_copy_url)
             logging.debug('Url {} reachable and get request is successful'.format(bhav_copy_url))
-        except requests.exceptions.Timeout as err_t:
+        except (requests.exceptions.Timeout,requests.exceptions.HTTPError,
+                requests.exceptions.ConnectionError,
+                 requests.exceptions.RequestException)  as err_t:
             error = {}
             error["Error"] = "Error : " + str(err_t)
             logging.debug(error["Error"])
             return json.dumps([error])
-        except requests.exceptions.HTTPError as err_h:
-            error = {}
-            error["Error"] = "Error : " + str(err_h)
-            logging.debug(error["Error"])
-            return json.dumps([error])
-        except requests.exceptions.ConnectionError as err_c:
-            error = {}
-            error["Error"] = "Error : " + str(err_c)
-            logging.debug(error["Error"])
-            return json.dumps([error])
-        except requests.exceptions.RequestException as err:
-            error = {}
-            error["Error"] = "Error : " + str(err)
-            logging.debug(error["Error"])
-            return json.dumps([error])
+
+        soup = Soup(response.content, 'html.parser')
+
+        # find all links with text Equity
+        links = soup.findAll('a', text=re.compile('Equity'), href=True)
+
+        # first link belongs to latest Bhav Copy Zip
+        zip_file_url = links[0]['href']
+        
+        # latest bhav_copy available
+        latest_bhavcopy_date = links[0].text
+        logging.debug('Bhav Copy Date : {}'.format(latest_bhavcopy_date))
+
+        # get zip content
+        zip_file_request = requests.get(zip_file_url)
+        z = zipfile.ZipFile(io.BytesIO(zip_file_request.content))
+
+        # Extract in CWD
+        z.extractall('.')
+
+        # assuming zip contains only one file
+        file_name = z.namelist()[0]
+        result = self.dump_to_redis(file_name)
+        if result is True:
+            top_entries = self.get_top_entries_redis()
+            logging.debug('First of 10 entries {}'.format(top_entries[0]))
+            return json.dumps(top_entries)
         else:
-            soup = Soup(response.content, 'html.parser')
-
-            # find all links with text Equity
-            links = soup.findAll('a', text=re.compile('Equity'), href=True)
-
-            # first link belongs to latest Bhav Copy Zip
-            zip_file_url = links[0]['href']
-            
-            # latest bhav_copy available
-            latest_bhavcopy_date = links[0].text
-            logging.debug('Bhav Copy Date : {}'.format(latest_bhavcopy_date))
-
-            # get zip content
-            zip_file_request = requests.get(zip_file_url)
-            z = zipfile.ZipFile(io.BytesIO(zip_file_request.content))
-
-            # Extract in CWD
-            z.extractall('.')
-
-            # assuming zip contains only one file
-            file_name = z.namelist()[0]
-            result = self.dump_to_redis(file_name)
-            if result is True:
-                top_entries = self.get_top_entries_redis()
-                logging.debug('First of 10 entries {}'.format(top_entries[0]))
-                return json.dumps(top_entries)
-            else:
-                error = {}
-                error["Error"] = "Error dumping entires into redis. " 
-                return json.dumps([error])
+            error = {}
+            error["Error"] = "Error dumping entires into redis. " 
+            return json.dumps([error])
 
     @cherrypy.expose
     def get_scrip_details(self, scrip_name):
