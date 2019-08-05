@@ -1,0 +1,2 @@
+## Description
+Webapp build using CherryPy which is used to download latest Bhav Copy from BSE website and store entries in Redis hashsets. Displays top 10 entries and has functionality for search by the scrip name.
