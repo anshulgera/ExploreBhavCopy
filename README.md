@@ -1,5 +1,5 @@
 ## Description
-Webapp build using CherryPy which is used to download latest Bhav Copy from BSE website and store entries in Redis hashsets. Displays top 10 entries and has functionality for search by the scrip name.
+Single Page Webapp build using CherryPy which is used to download latest Bhav Copy from BSE website and store entries in Redis hashsets. Displays top 10 entries and has functionality for search by the scrip name.
 ## Getting started
 You can run this using docker or by directly running the Cherrypy app and Redis server:
 ### 1. Using Docker
